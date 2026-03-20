@@ -8,12 +8,17 @@
 
 ## 1. Project Overview
 
-E-Commerce Center Backend is a full-featured commerce API designed to handle the hard parts of real e-commerce: **idempotent checkout under concurrent traffic**, **guest-to-authenticated cart migration**, **multi-rule coupon evaluation**, **Stripe payment lifecycle via webhooks**, and **dropshipping supplier automation**.
+### The Business
 
-The system serves two audiences simultaneously:
+E-Commerce Center is a **multi-vendor dropshipping platform** that lets store operators run an online retail business without holding physical inventory. Operators browse and import products from **CJ Dropshipping** — one of the largest global fulfillment networks — into their own branded storefront, set custom retail pricing over supplier costs to capture margin, and let the platform handle the rest: **checkout, payment processing, inventory tracking, coupon promotions, and order lifecycle management**.
 
-- **Storefront consumers** — browse catalog, manage carts (as guest or authenticated user), checkout with Stripe, track orders.
-- **Admin operators** — manage products/categories/variants, monitor inventory, configure coupons, issue refunds, view revenue dashboards, and import products from CJ Dropshipping.
+Customers experience a polished storefront — product browsing with category navigation, variant selection (size/color/material), a persistent cart that survives login, coupon-aware pricing, a 3-step checkout with address collection and shipping selection, and secure Stripe payment with 3D Secure support. Once payment succeeds, the platform automatically confirms the order, deducts stock, and queues fulfillment events.
+
+Store admins get a full back-office: real-time revenue dashboards with KPI trends, product/category/variant CRUD with image management, inventory monitoring with low-stock alerts, a flexible coupon engine for marketing campaigns, payment and refund tracking synced with Stripe, and CJ Dropshipping product import with freight cost estimation.
+
+### Technical Summary
+
+The backend is a production-grade REST API built to handle the hard parts of real e-commerce: **idempotent checkout under concurrent traffic**, **guest-to-authenticated cart migration**, **multi-rule coupon evaluation**, **Stripe payment lifecycle via webhooks**, and **dropshipping supplier automation**.
 
 Built with a strict **Clean Architecture** boundary (API → Application → Domain → Infrastructure) so business logic stays testable and infrastructure stays swappable.
 
@@ -144,21 +149,7 @@ A dedicated `CouponEvaluator` service acts as the single source of truth for cou
 
 ---
 
-## 5. Challenges & Solutions
-
-| Challenge                                             | Solution                                                                                                                                                                                                 |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Duplicate orders from network retries**             | Idempotency keys with body-hash validation and DB unique constraint on `(Key, Route)`. Cached responses replayed on retry; mismatched bodies return 409.                                                 |
-| **Inventory overselling under concurrency**           | Optimistic concurrency via SQL Server `rowversion` on `InventoryItem`. Stock deducted atomically inside the webhook transaction (not at checkout creation), preventing phantom holds.                    |
-| **Guest-to-authenticated cart continuity**            | Encrypted session cookie identifies guest carts. On login/register, guest items are merged by variant ID (quantities summed, capped at 99). Session cookie cleared post-merge.                           |
-| **Coupon evaluation complexity**                      | Single-responsibility `CouponEvaluator` service handles all rule combinations (scope, limits, dates, minimums) in a defined pipeline. Used identically at cart-read time and checkout-commit time.       |
-| **Webhook event ordering & duplication**              | `PaymentProviderEvent` table with unique constraint on `(Provider, EventId)` ensures each Stripe event is processed exactly once. Idempotent status transitions (e.g., already-Paid orders are skipped). |
-| **N+1 queries in checkout validation**                | Variants and inventory items are bulk-loaded into dictionaries by ID; all validations run in-memory against the maps. Inventory items sorted by VariantId before locking to prevent deadlocks.           |
-| **Slug collisions under concurrent product creation** | DB sequence (`slug_suffix_seq`) generates unique numeric suffixes in a single atomic call — no retry loops or optimistic checks needed.                                                                  |
-
----
-
-## 6. Performance & Optimization
+## 5. Performance & Optimization
 
 - **Bulk data access** — checkout loads all variants and inventory items in two queries (not per-item), reducing round-trips from O(n) to O(1).
 - **Sorted locking order** — inventory items are processed in `VariantId` order within transactions to prevent deadlock cycles.
@@ -169,7 +160,7 @@ A dedicated `CouponEvaluator` service acts as the single source of truth for cou
 
 ---
 
-## 7. How to Run the Project
+## 6. How to Run the Project
 
 ### Prerequisites
 
@@ -222,13 +213,4 @@ dotnet run --project src/ECommerceCenter.API
 
 API available at `http://localhost:5247` (see `Properties/launchSettings.json`).
 
----
 
-## 8. Future Improvements
-
-- **Event-driven side effects** — connect outbox publisher to a real message broker (RabbitMQ / Azure Service Bus) to decouple email, analytics, and supplier sync.
-- **Rate limiting** — apply per-IP and per-user rate limits on checkout and auth endpoints.
-- **Read models for dashboard** — pre-aggregate revenue/order metrics into materialized views to eliminate real-time Stripe API calls.
-- **Integration test suite** — cover webhook flows, idempotency race conditions, and coupon edge cases with testcontainers.
-- **OpenTelemetry observability** — distributed tracing with correlation IDs from API → outbox → background workers.
-- **Multi-tenant support** — extend `StoreSettings` to support multiple storefronts with independent catalogs and configurations.
