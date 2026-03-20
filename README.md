@@ -1,9 +1,11 @@
 ### 1. Project Overview
+
 - **E-Commerce Center Backend** is a production-style REST API that powers both an **admin dashboard** and a **public storefront** (catalog browsing, cart, checkout, payments).
 - It solves the “hard parts” of e-commerce that tend to break in real deployments: **auth with refresh tokens**, **idempotent checkout**, **inventory consistency**, **coupon rules**, and **payment lifecycle via Stripe webhooks**.
 - Built for teams that care about maintainability: the codebase is structured as **API → Application → Domain → Infrastructure** so business logic stays testable and infrastructure stays swappable.
 
 ### 2. Key Features
+
 - **JWT access tokens + HttpOnly refresh-token cookies**: short-lived access tokens for APIs, refresh token stored server-side + cookie-based rotation to reduce XSS exposure.
 - **CQRS with MediatR + FluentValidation pipeline**: commands/queries live in `Application/Features/*`, with validation applied consistently via a MediatR behavior.
 - **Idempotent checkout**: `POST /api/v1/checkout` requires an `Idempotency-Key` header; the request body is hashed and cached responses are replayed safely to prevent duplicate orders on retries.
@@ -14,6 +16,7 @@
 - **Media storage abstraction**: product images are served as static files from `wwwroot` and also support Azure Blob storage via `IImageStorageService`.
 
 ### 3. Tech Stack
+
 - **Backend**
   - **.NET 10 / ASP.NET Core**: modern hosting model, strong DI and middleware, high throughput.
   - **MediatR + FluentValidation**: CQRS separation and centralized validation without controller bloat.
@@ -29,6 +32,7 @@
   - **Transactions + idempotency + outbox**: reliability primitives that scale with real traffic patterns (retries, webhook duplication, eventual consistency).
 
 ### 4. Architecture & Design
+
 - **Layered “Clean Architecture” boundaries**
   - **API**: thin controllers, cookie handling, CORS policy, and exception middleware.
   - **Application**: business use-cases in `Features/*` (commands/queries), plus cross-cutting behaviors (validation), result types, and settings.
@@ -46,6 +50,7 @@
   - Refresh token stored in **HttpOnly cookie**, sent cross-origin only when CORS is configured with credentials.
 
 ### 5. Challenges & Solutions
+
 - **Preventing duplicate orders on flaky networks**
   - Checkout is designed around **idempotency keys + cached responses**, so retries (browser refresh, timeouts, mobile networks) don’t create multiple orders.
 - **Avoiding N+1 queries while validating cart items**
@@ -56,16 +61,18 @@
   - Stripe/Firebase/SMTP/Blob are behind interfaces in Application; Infrastructure owns the concrete implementations.
 
 ### 6. Performance & Optimization (if applicable)
+
 - **Bulk data access** for checkout validations (variants, inventory) to avoid per-item DB calls.
 - **Cursor-based charge listing support** (server + client patterns) to keep admin payment browsing scalable.
 - **Short-lived JWTs** and cookie-based refresh reduce the blast radius of leaked access tokens.
 
 ### 7. How to Run the Project
-1) **Prerequisites**
+
+1. **Prerequisites**
    - .NET SDK **10.0**
    - SQL Server (localdb or Docker)
 
-2) **Configure settings**
+2. **Configure settings**
    - Set connection string in `src/ECommerceCenter.API/appsettings.json`:
 
    ```json
@@ -103,7 +110,7 @@
    }
    ```
 
-3) **Apply migrations**
+3. **Apply migrations**
    - From the backend folder:
 
    ```bash
@@ -111,7 +118,7 @@
    dotnet ef database update --project src/ECommerceCenter.Infrastructure --startup-project src/ECommerceCenter.API
    ```
 
-4) **Run the API**
+4. **Run the API**
 
    ```bash
    dotnet run --project src/ECommerceCenter.API
@@ -120,6 +127,7 @@
    - Default dev URL is `http://localhost:5247` (see `launchSettings.json`).
 
 ### 8. Future Improvements
+
 - **Turn on Outbox workers** and route events to real side effects (email, supplier sync, analytics) or a message broker.
 - Add **rate limiting** and **structured audit trails** around sensitive admin operations.
 - Introduce **read models** for dashboard-heavy queries (pre-aggregations, materialized views) while keeping transactional writes clean.
