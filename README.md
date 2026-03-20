@@ -2,6 +2,8 @@
 
 > Production-grade e-commerce REST API built with .NET 10, Clean Architecture, and CQRS. Powers both an admin dashboard and a public storefront with Stripe payments, real-time inventory, a rules-based coupon engine, and CJ Dropshipping supplier integration.
 
+**Frontend repo →** [ecommerce-platform-front-end](https://github.com/MoathEssa/ecommerce-platform-front-end)
+
 ---
 
 ## 1. Project Overview
