@@ -1,6 +1,6 @@
 # E-Commerce Center — Backend API
 
-> Production-grade e-commerce REST API built with .NET 10, Clean Architecture, and CQRS. Powers both an admin dashboard and a public storefront with Stripe payments, real-time inventory, a rules-based coupon engine, and CJ Dropshipping supplier integration.
+> Production-oriented e-commerce REST API built with .NET 10, Clean Architecture, and CQRS. Designed with production-minded patterns — idempotent checkout, transactional outbox, optimistic concurrency — and deployed to Azure via CI/CD. Powers both an admin dashboard and a public storefront with Stripe payments, real-time inventory, a rules-based coupon engine, and CJ Dropshipping supplier integration.
 
 **Frontend repo →** [ecommerce-platform-front-end](https://github.com/MoathEssa/ecommerce-platform-front-end)
 
@@ -18,7 +18,7 @@ Store admins get a full back-office: real-time revenue dashboards with KPI trend
 
 ### Technical Summary
 
-The backend is a production-grade REST API built to handle the hard parts of real e-commerce: **idempotent checkout under concurrent traffic**, **guest-to-authenticated cart migration**, **multi-rule coupon evaluation**, **Stripe payment lifecycle via webhooks**, and **dropshipping supplier automation**.
+The backend is a production-oriented REST API built to handle the hard parts of real e-commerce: **idempotent checkout under concurrent traffic**, **guest-to-authenticated cart migration**, **multi-rule coupon evaluation**, **Stripe payment lifecycle via webhooks**, and **dropshipping supplier automation**.
 
 Built with a strict **Clean Architecture** boundary (API → Application → Domain → Infrastructure) so business logic stays testable and infrastructure stays swappable.
 
@@ -184,7 +184,7 @@ Set the connection string in `src/ECommerceCenter.API/appsettings.json`:
 }
 ```
 
-Store secrets via **User Secrets** or environment variables:
+For **local development**, store secrets via **User Secrets** or environment variables (secrets are never committed to source control). In CI/CD and production, secrets are injected through GitHub Actions secrets and Azure App Service application settings — see [§7 Deployment](#7-deployment) and [§8 Production Configuration](#8-production-configuration).
 
 | Key                               | Description                                 |
 | --------------------------------- | ------------------------------------------- |
@@ -213,4 +213,52 @@ dotnet run --project src/ECommerceCenter.API
 
 API available at `http://localhost:5247` (see `Properties/launchSettings.json`).
 
+---
 
+## 7. Deployment
+
+The backend is deployed to **Azure App Service** (Linux) with infrastructure defined as code and fully automated CI/CD.
+
+| Concern            | Tool                                        | Location                                    |
+| ------------------ | ------------------------------------------- | ------------------------------------------- |
+| **Infrastructure** | Azure Bicep                                 | `infra/main.bicep`, `infra/main.bicepparam` |
+| **CI/CD**          | GitHub Actions                              | `.github/workflows/deploy.yml`              |
+| **Hosting**        | Azure App Service (Linux, .NET 10)          | Resource created by Bicep                   |
+| **Secrets**        | GitHub Actions Secrets → Azure App Settings | No secrets in source control                |
+
+**How it works:**
+
+1. Push to `main` triggers the GitHub Actions workflow.
+2. The workflow builds and publishes the .NET API.
+3. Bicep deploys (or updates) the App Service Plan and App Service, injecting all runtime secrets as application settings.
+4. The published artifact is deployed to Azure App Service.
+
+The Bicep template creates an App Service Plan (Free F1 tier by default) and an App Service configured with HTTPS-only, TLS 1.2+, and FTPS disabled.
+
+---
+
+## 8. Production Configuration
+
+Production secrets are **never committed** to source control.
+
+- **Local development** → `dotnet user-secrets` or environment variables.
+- **CI/CD & production** → GitHub Actions secrets are passed as Bicep parameters at deploy time and land as **Azure App Service application settings**.
+
+ASP.NET Core automatically reads App Service application settings as environment variables. Double underscores (`__`) map to nested configuration keys:
+
+| App Setting                            | Maps to `IConfiguration` key          |
+| -------------------------------------- | ------------------------------------- |
+| `ConnectionStrings__DefaultConnection` | `ConnectionStrings:DefaultConnection` |
+| `JwtSettings__SecretKey`               | `JwtSettings:SecretKey`               |
+| `SmtpSettings__Username`               | `SmtpSettings:Username`               |
+| `AppSettings__FrontendBaseUrl`         | `AppSettings:FrontendBaseUrl`         |
+
+No code changes are needed — the standard ASP.NET Core configuration provider hierarchy handles the override automatically.
+
+> **Upgrade path:** For stricter secret management, Azure Key Vault references can replace plain App Service settings with a single configuration change.
+
+---
+
+## 9. Version
+
+**v1.0.0** — First public portfolio release with full checkout flow, Stripe integration, coupon engine, CJ Dropshipping import, Azure deployment, and CI/CD pipeline.
