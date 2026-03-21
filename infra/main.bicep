@@ -57,10 +57,6 @@ param stripeSecretKey string = ''
 @description('Stripe webhook signing secret')
 param stripeWebhookSecret string = ''
 
-@secure()
-@description('Firebase service account JSON (single-line, escaped)')
-param firebaseServiceAccountJson string = ''
-
 @description('Azure Blob Storage account name')
 param blobStorageAccountName string = ''
 
@@ -171,11 +167,6 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'Stripe__WebhookSecret'
           value: stripeWebhookSecret
-        }
-        // ── Firebase ──
-        {
-          name: 'FirebaseAuth__ServiceAccountJson'
-          value: firebaseServiceAccountJson
         }
         // ── Blob Storage ──
         {
