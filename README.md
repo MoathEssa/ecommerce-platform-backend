@@ -2,7 +2,9 @@
 
 > Production-oriented e-commerce REST API built with .NET 10, Clean Architecture, and CQRS. Designed with production-minded patterns — idempotent checkout, transactional outbox, optimistic concurrency — and deployed to Azure via CI/CD. Powers both an admin dashboard and a public storefront with Stripe payments, real-time inventory, a rules-based coupon engine, and CJ Dropshipping supplier integration.
 
-**Frontend repo →** [ecommerce-platform-front-end](https://github.com/MoathEssa/ecommerce-platform-front-end)
+🔗 **Live API** → [ecommercecenter-api.azurewebsites.net/scalar/v1](https://ecommercecenter-api.azurewebsites.net/scalar/v1)  
+🖥️ **Live Frontend** → [nice-forest-072cc5d0f.4.azurestaticapps.net](https://nice-forest-072cc5d0f.4.azurestaticapps.net)  
+📦 **Frontend repo** → [ecommerce-platform-front-end](https://github.com/MoathEssa/ecommerce-platform-front-end)
 
 ---
 
