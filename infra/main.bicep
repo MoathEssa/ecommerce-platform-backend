@@ -49,6 +49,25 @@ param frontendBaseUrl string = 'http://localhost:3000'
 @description('CJ Dropshipping API key')
 param cjApiKey string = ''
 
+@secure()
+@description('Stripe secret key')
+param stripeSecretKey string = ''
+
+@secure()
+@description('Stripe webhook signing secret')
+param stripeWebhookSecret string = ''
+
+@secure()
+@description('Firebase service account JSON (single-line, escaped)')
+param firebaseServiceAccountJson string = ''
+
+@description('Azure Blob Storage account name')
+param blobStorageAccountName string = ''
+
+@secure()
+@description('Azure Blob Storage account key')
+param blobStorageAccountKey string = ''
+
 // ── App Service Plan ────────────────────────────────────────────────────────
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
@@ -143,6 +162,29 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'CjDropshipping__ApiKey'
           value: cjApiKey
+        }
+        // ── Stripe ──
+        {
+          name: 'Stripe__SecretKey'
+          value: stripeSecretKey
+        }
+        {
+          name: 'Stripe__WebhookSecret'
+          value: stripeWebhookSecret
+        }
+        // ── Firebase ──
+        {
+          name: 'FirebaseAuth__ServiceAccountJson'
+          value: firebaseServiceAccountJson
+        }
+        // ── Blob Storage ──
+        {
+          name: 'BlobStorage__AccountName'
+          value: blobStorageAccountName
+        }
+        {
+          name: 'BlobStorage__AccountKey'
+          value: blobStorageAccountKey
         }
         // ── ASP.NET Core environment ──
         {

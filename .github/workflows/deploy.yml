@@ -84,6 +84,11 @@ jobs:
             smtpUsername="${{ secrets.SMTP_USERNAME }}"
             frontendBaseUrl="${{ secrets.FRONTEND_BASE_URL }}"
             cjApiKey="${{ secrets.CJ_API_KEY }}"
+            stripeSecretKey="${{ secrets.STRIPE_SECRET_KEY }}"
+            stripeWebhookSecret="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
+            firebaseServiceAccountJson="${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}"
+            blobStorageAccountName="${{ secrets.BLOB_STORAGE_ACCOUNT_NAME }}"
+            blobStorageAccountKey="${{ secrets.BLOB_STORAGE_ACCOUNT_KEY }}"
           failOnStdErr: false
 
   # ╭──────────────────────────────────────────╮
