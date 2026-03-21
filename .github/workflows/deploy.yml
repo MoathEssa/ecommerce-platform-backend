@@ -77,13 +77,13 @@ jobs:
           resourceGroupName: ${{ env.AZURE_RG }}
           template: infra/main.bicep
           parameters: >-
-            appName=${{ env.APP_NAME }}
-            connectionStringDefault=${{ secrets.CONNECTION_STRING_DEFAULT }}
-            jwtSecretKey=${{ secrets.JWT_SECRET_KEY }}
-            smtpPassword=${{ secrets.SMTP_PASSWORD }}
-            smtpUsername=${{ secrets.SMTP_USERNAME }}
-            frontendBaseUrl=${{ secrets.FRONTEND_BASE_URL }}
-            cjApiKey=${{ secrets.CJ_API_KEY }}
+            appName="${{ env.APP_NAME }}"
+            connectionStringDefault="${{ secrets.CONNECTION_STRING_DEFAULT }}"
+            jwtSecretKey="${{ secrets.JWT_SECRET_KEY }}"
+            smtpPassword="${{ secrets.SMTP_PASSWORD }}"
+            smtpUsername="${{ secrets.SMTP_USERNAME }}"
+            frontendBaseUrl="${{ secrets.FRONTEND_BASE_URL }}"
+            cjApiKey="${{ secrets.CJ_API_KEY }}"
           failOnStdErr: false
 
   # ╭──────────────────────────────────────────╮
