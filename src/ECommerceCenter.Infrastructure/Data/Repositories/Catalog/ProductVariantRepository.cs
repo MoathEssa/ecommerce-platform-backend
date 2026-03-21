@@ -89,7 +89,7 @@ public class ProductVariantRepository(AppDbContext context)
         if (raw is null) return null;
 
         return new VariantDetailRow(
-            raw.Id, raw.Sku, raw.OptionsJson, raw.BasePrice, raw.CurrencyCode,
+            raw.Id, raw.Sku!, raw.OptionsJson, raw.BasePrice, raw.CurrencyCode,
             raw.OnHand,
             raw.Images.Select(i => new CatalogImageRow(i.Id, i.Url, i.VariantId, i.SortOrder)).ToList());
     }

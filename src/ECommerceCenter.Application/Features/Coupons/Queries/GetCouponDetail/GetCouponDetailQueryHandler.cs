@@ -30,7 +30,7 @@ public class GetCouponDetailQueryHandler(ICouponRepository couponRepository)
             coupon.ApplicableProducts.Select(ap =>
                 new CouponProductRefDto(ap.ProductId, ap.Product.Title)).ToList(),
             coupon.ApplicableVariants.Select(av =>
-                new CouponVariantRefDto(av.VariantId, av.Variant.Sku)).ToList(),
+                new CouponVariantRefDto(av.VariantId, av.Variant.Sku!)).ToList(),
             new CouponUsageStatsDto(
                 totalUsed, uniqueUsers, totalDiscountGiven,
                 recentUsages.Select(u => new CouponUsageItemDto(

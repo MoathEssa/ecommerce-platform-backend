@@ -35,7 +35,7 @@ public class InventoryItemRepository(AppDbContext context)
         {
             var term = search.Trim().ToLower();
             query = query.Where(i =>
-                i.Variant.Sku.ToLower().Contains(term) ||
+                i.Variant.Sku!.ToLower().Contains(term) ||
                 i.Variant.Product.Title.ToLower().Contains(term));
         }
 

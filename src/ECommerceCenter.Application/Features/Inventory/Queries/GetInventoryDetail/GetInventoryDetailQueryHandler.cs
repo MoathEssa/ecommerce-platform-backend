@@ -25,7 +25,7 @@ public class GetInventoryDetailQueryHandler(
 
         var dto = new InventoryDetailDto(
             item.VariantId,
-            item.Variant.Sku,
+            item.Variant.Sku!,
             item.Variant.Product.Title,
             item.OnHand,
             item.OnHand,

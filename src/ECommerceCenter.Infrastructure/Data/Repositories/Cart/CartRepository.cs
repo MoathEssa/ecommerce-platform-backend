@@ -52,7 +52,7 @@ public class CartRepository(AppDbContext context)
                 i.VariantId,
                 i.Quantity,
                 i.Variant.IsActive,
-                i.Variant.Sku,
+                i.Variant.Sku!,
                 i.Variant.OptionsJson,
                 i.Variant.BasePrice,
                 i.Variant.ProductId,

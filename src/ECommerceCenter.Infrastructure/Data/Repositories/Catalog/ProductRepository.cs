@@ -146,7 +146,7 @@ public class ProductRepository(AppDbContext context)
             raw.Id, raw.Title, raw.Slug, raw.Description, raw.Brand, raw.Status,
             raw.ExternalProductId, raw.Supplier,
             cat,
-            raw.Variants.Select(v => new CatalogVariantRow(v.Id, v.Sku, v.OptionsJson, v.BasePrice, v.SupplierPrice, v.CurrencyCode, v.IsActive, v.OnHand)).ToList(),
+            raw.Variants.Select(v => new CatalogVariantRow(v.Id, v.Sku!, v.OptionsJson, v.BasePrice, v.SupplierPrice, v.CurrencyCode, v.IsActive, v.OnHand)).ToList(),
             raw.Images.Select(i => new CatalogImageRow(i.Id, i.Url, i.VariantId, i.SortOrder)).ToList(),
             raw.CreatedAt);
     }
@@ -250,7 +250,7 @@ public class ProductRepository(AppDbContext context)
             raw.Id, raw.Title, raw.Slug, raw.Description, raw.Brand, (int)raw.Status,
             raw.ExternalProductId, raw.Supplier,
             adminCat,
-            raw.Variants.Select(v => new CatalogVariantRow(v.Id, v.Sku, v.OptionsJson, v.BasePrice, v.SupplierPrice, v.CurrencyCode, v.IsActive, v.OnHand)).ToList(),
+            raw.Variants.Select(v => new CatalogVariantRow(v.Id, v.Sku!, v.OptionsJson, v.BasePrice, v.SupplierPrice, v.CurrencyCode, v.IsActive, v.OnHand)).ToList(),
             raw.Images.Select(i => new CatalogImageRow(i.Id, i.Url, i.VariantId, i.SortOrder)).ToList(),
             raw.CreatedAt, raw.UpdatedAt);
     }

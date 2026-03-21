@@ -92,7 +92,7 @@ public class AddVariantCommandHandler(
         }, cancellationToken);
 
         return Result<AdminVariantCreatedDto>.Success(new AdminVariantCreatedDto(
-            variant.Id, variant.ProductId, variant.Sku,
+            variant.Id, variant.ProductId, variant.Sku!,
             request.Options,
             variant.BasePrice, variant.SupplierPrice, variant.CurrencyCode, variant.IsActive,
             new AdminInventoryDto(inventory.OnHand, inventory.OnHand)));

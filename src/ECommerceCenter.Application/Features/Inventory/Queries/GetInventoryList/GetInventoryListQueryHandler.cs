@@ -25,7 +25,7 @@ public class GetInventoryListQueryHandler(IInventoryItemRepository inventoryItem
 
         var dtos = items.Select(i => new InventoryListItemDto(
             i.VariantId,
-            i.Variant.Sku,
+            i.Variant.Sku!,
             i.Variant.Product.Title,
             i.Variant.OptionsJson,
             i.OnHand,

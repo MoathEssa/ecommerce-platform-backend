@@ -7,7 +7,7 @@
 param appName string
 
 @description('Azure region for all resources')
-param location string = resourceGroup().location
+param location string = 'eastus'
 
 @description('App Service Plan SKU – F1 (free) is great for portfolio demos')
 @allowed(['F1', 'B1', 'B2', 'S1'])
