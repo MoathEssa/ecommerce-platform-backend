@@ -1,6 +1,11 @@
 ## ---- Docs (excluded from repo) ----
 docs/
 
+## ---- Environment files ----
+.env
+.env.*
+!.env.example
+
 ## ---- .NET build outputs ----
 [Bb]in/
 [Oo]bj/
