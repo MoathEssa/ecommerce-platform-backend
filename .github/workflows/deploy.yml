@@ -119,11 +119,14 @@ jobs:
           package: ${{ env.PUBLISH_DIR }}
 
       - name: Set Firebase service account JSON
+        env:
+          FIREBASE_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
           az webapp config appsettings set \
             --name "${{ env.APP_NAME }}-api" \
             --resource-group "${{ env.AZURE_RG }}" \
-            --settings "FirebaseAuth__ServiceAccountJson=${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}"
+            --output none \
+            --settings "FirebaseAuth__ServiceAccountJson=${FIREBASE_JSON}"
 
       - name: Azure logout
         if: always()
