@@ -1,6 +1,7 @@
 using ECommerceCenter.Application;
 using ECommerceCenter.API.Middleware;
 using ECommerceCenter.Infrastructure;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,9 @@ app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 app.MapControllers();
 
